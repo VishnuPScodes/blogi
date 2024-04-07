@@ -1,6 +1,6 @@
 import { validationResult } from 'express-validator';
 import mongoSanitize from 'express-mongo-sanitize';
-import asyncHandler from './../../utils/asyncHandler.js';
+import asyncHandler from '../../../utils/asyncHandler.js';
 
 const validateRequest = [
   mongoSanitize(),
