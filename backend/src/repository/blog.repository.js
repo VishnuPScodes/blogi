@@ -1,16 +1,15 @@
-import BlogModel from '../models/Blog.model.js';
+import { Blogs } from '../model/blog.model.js';
 import LiveBlogModel from '../models/liveBlog.model.js';
 
 export class BlogRepository {
   constructor() {
-    this._model = BlogModel;
-    this._liveBlogModel = LiveBlogModel;
+    this._model = Blogs;
   }
 
   async getAllBlog() {
-    const Blog = this._model.find().lean();
+    const Blogs = this._model.find().lean();
 
-    return Blog;
+    return Blogs;
   }
 
   async createBlog(params) {
@@ -54,7 +53,7 @@ export class BlogRepository {
       difficulty,
       userId,
     } = params;
-    const BlogCreated = await this._liveBlogModel.create({
+    const BlogCreated = await this._model.create({
       id,
       Blog,
       option1,
@@ -92,7 +91,7 @@ export class BlogRepository {
   }
 
   async deleteAllBlogForTheUser(userId) {
-    const Blog = await this._liveBlogModel.deleteMany({ userId });
+    const Blog = await this._model.deleteMany({ userId });
 
     return Blog;
   }

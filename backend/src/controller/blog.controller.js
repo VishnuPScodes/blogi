@@ -22,17 +22,12 @@ export const getBlogById = async (req, res) => {
 };
 
 export const createBlog = async (req, res) => {
-  const { id, Blog, option1, option2, option3, option4, answer, difficulty } =
-    req.body;
+  const { userId, title, description, tags } = req.body;
   const postedBlog = await BlogToUserServices_.createBlog({
-    id,
-    Blog,
-    option1,
-    option2,
-    option3,
-    option4,
-    answer,
-    difficulty,
+    userId,
+    title,
+    description,
+    tags,
   });
   if (!postedBlog) {
     throw new BadRequestError('Could not post the Blog');
@@ -40,34 +35,21 @@ export const createBlog = async (req, res) => {
 
   res.send(postedBlog);
 };
+//making comment by other user
+export const createComment = async (req, res) => {
+  const { userId, comment } = req.body;
+  const { blogId } = req.params;
 
-export const postBlogForOneUserByAdmin = async (req, res) => {
-  const userId = req.params.userI;
-  const { id, Blog, option1, option2, option3, option4, answer, difficulty } =
-    req.body;
-  const postedBlog = await BlogToUserServices_.postBlogForOneUserByAdmin({
-    id,
-    Blog,
-    option1,
-    option2,
-    option3,
-    option4,
-    answer,
-    difficulty,
+  const blog = await BlogToUserServices_.createBlog({
     userId,
+    comment,
+    blogId,
   });
+  if (!blog) {
+    throw new BadRequestError('Could not post the comment');
+  }
 
-  res.send(postedBlog);
-};
-
-export const userResponseEvaluation = async (req, res) => {
-  const { BlogId, answer } = req.body;
-  const nextBlog = await BlogToUserServices_.userResponseEvaluation({
-    BlogId,
-    answer,
-  });
-
-  res.send(nextBlog);
+  res.send(blog);
 };
 
 export const removeAllBlogsPerUser = async (req, res) => {
