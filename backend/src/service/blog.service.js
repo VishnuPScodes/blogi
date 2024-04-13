@@ -17,17 +17,12 @@ class BlogServices {
   }
 
   async createBlog(params) {
-    const { id, Blog, option1, option2, option3, option4, answer, difficulty } =
-      params;
+    const { userId, title, description, tags } = params;
     const postedBlog = await this._BlogRepository.createBlog({
-      id,
-      Blog,
-      option1,
-      option2,
-      option3,
-      option4,
-      answer,
-      difficulty,
+      userId,
+      title,
+      description,
+      tags,
     });
     if (!postedBlog) {
       throw new BadRequestError('Could not post the Blog');

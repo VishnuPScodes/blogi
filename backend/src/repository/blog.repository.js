@@ -15,17 +15,12 @@ export class BlogRepository {
   }
 
   async createBlog(params) {
-    const { id, Blog, option1, option2, option3, option4, answer, difficulty } =
-      params;
+    const { userId, title, description, tags } = params;
     const postedBlog = await BlogModel.create({
-      id,
-      Blog,
-      option1,
-      option2,
-      option3,
-      option4,
-      answer,
-      difficulty,
+      userId,
+      title,
+      description,
+      tags,
     });
 
     return postedBlog;
