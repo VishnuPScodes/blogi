@@ -54,64 +54,6 @@ class BlogServices {
     return Blog;
   }
 
-  async postBlogForOneUserByAdmin(params) {
-    const {
-      id,
-      Blog,
-      option1,
-      option2,
-      option3,
-      option4,
-      answer,
-      difficulty,
-      userId,
-    } = params;
-    const BlogCreated = await this._BlogRepository.postBlogForOneUserByAdmin({
-      id,
-      Blog,
-      option1,
-      option2,
-      option3,
-      option4,
-      answer,
-      difficulty,
-      userId,
-    });
-    if (!BlogCreated) {
-      throw new BadRequestError('Could not post the Blog!');
-    }
-
-    return BlogCreated;
-  }
-
-  async userResponseEvaluation(params) {
-    const { BlogId, answer } = params;
-    const Blog = await this._BlogRepository.getBlogById(BlogId);
-
-    if (!Blog) {
-      throw new BadRequestError('Blog not found!');
-    }
-    const difficultyLevel = Blog.difficulty;
-
-    const isAnswerCorrect = bcrypt.compareSync(answer, Blog?.answer);
-
-    if (isAnswerCorrect) {
-      const BlogWithMoreDifficulty =
-        await this._BlogRepository.getBlogWithMoreDifficultyLevel(
-          difficultyLevel
-        );
-
-      return BlogWithMoreDifficulty;
-    }
-
-    const BlogWithLessDifficulty =
-      await this._BlogRepository.getBlogWithLessDifficultyLevel(
-        difficultyLevel
-      );
-
-    return BlogWithLessDifficulty;
-  }
-
   async removeAllBlogForTheUser(userId) {
     const Blog = await this._BlogRepository.deleteAllBlogForTheUser(userId);
     if (!Blog) {
@@ -119,6 +61,30 @@ class BlogServices {
     }
 
     return Blog;
+  }
+
+  async userLikeOrDisLikePost({ userId, blogId }) {
+    const hasUserAlreadyLiked = await this._BlogRepository.hasUserAlreadyLiked({
+      userId,
+      blogId,
+    });
+    if (!hasUserAlreadyLiked) {
+      throw new BadRequestError('Something went wrong!');
+    }
+    let post;
+    if (hasUserAlreadyLiked == 'yes') {
+      post = await this._BlogRepository.unLikePost();
+      if (!post) {
+        throw new BadRequestError('Could not unlike the post');
+      }
+    } else if (hasUserAlreadyLiked == 'no') {
+      post = await this._BlogRepository.likePost();
+      if (!post) {
+        throw new BadRequestError('Could not like the post');
+      }
+    }
+
+    return post;
   }
 }
 

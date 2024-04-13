@@ -18,7 +18,6 @@ export const blogSchema = new mongoose.Schema({
   viewers: {
     type: [Types.ObjectId],
   },
-  comments: [Types.ObjectId],
   likes: {
     type: [Types.ObjectId],
   },

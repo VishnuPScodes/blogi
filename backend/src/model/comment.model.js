@@ -12,6 +12,10 @@ export const commentSchema = new mongoose.Schema({
   likes: {
     type: [Types.ObjectId],
   },
+  blogId: {
+    type: Types.ObjectId,
+    required: true,
+  },
 });
 
-export const Blogs = new mongoose.model('comment', commentSchema);
+export const Comment = new mongoose.model('comment', commentSchema);
