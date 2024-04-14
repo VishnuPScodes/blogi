@@ -7,8 +7,6 @@ import {
   getUserBlogs,
   userLikeOrDisLikePost,
 } from '../controller/blog.controller.js';
-import { registerValidator } from '../middlewares/validators/blog/register.validators.js';
-import { loginValidator } from '../middlewares/validators/blog/login.validators.js';
 import { isAuthenticated } from '../middlewares/auth/isAuthenticated.js';
 
 const blogRouter = express.Router();

@@ -11,8 +11,13 @@ export const getUserInfo = async (req, res) => {
 };
 
 export const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
-  const user = await UserAuthServices_.registerUser({ name, email, password });
+  const { name, email, password, profilePicture } = req.body;
+  const user = await UserAuthServices_.registerUser({
+    name,
+    email,
+    password,
+    profilePicture,
+  });
 
   res.status(200).send({
     message: 'User registered',

@@ -8,8 +8,32 @@ export class BlogRepository {
     this._comment = Comment;
   }
 
-  async getAllBlog() {
-    const Blogs = this._model.find().lean();
+  async getAllBlog(userId) {
+    const Blogs = this._model.aggregate([
+      {
+        match: {
+          userId: { $ne: userId },
+        },
+      },
+      {
+        $lookup: {
+          from: 'Comments',
+          localField: 'comment.',
+          foreignField: '_id',
+          as: 'comments',
+        },
+      },
+      {
+        $addNewField: {
+          totalLikes: {
+            $count: '$likes',
+          },
+        },
+      },
+      {
+        $sort: {},
+      },
+    ]);
 
     return Blogs;
   }
@@ -113,6 +137,12 @@ export class BlogRepository {
 
   async deleteAllBlogForTheUser(userId) {
     const Blog = await this._model.deleteMany({ userId });
+
+    return Blog;
+  }
+
+  async deleteOneBlogForTheUser(userId, blogId) {
+    const Blog = await this._model.findOneAndDelete({ userId, blogId });
 
     return Blog;
   }

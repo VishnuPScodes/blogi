@@ -1,14 +1,17 @@
 // import { BlogsRepository } from '../repository/Blogs.repository.js';
+import { BlogRepository } from '../repository/blog.repository.js';
 import { NotFoundError, BadRequestError } from '../utils/response/error.js';
-import bcrypt from 'bcryptjs';
 
 class BlogServices {
   constructor() {
-    this._BlogRepository = new BlogsRepository();
+    this._BlogRepository = new BlogRepository();
   }
 
-  async getAllBlogs() {
-    const allBlogs = await this._BlogRepository.getAllBlogs();
+  async getAllBlogs(userId) {
+    if (!userId) {
+      NotFoundError('UserId not found!');
+    }
+    const allBlogs = await this._BlogRepository.getAllBlog(userId);
     if (!allBlogs) {
       throw new NotFoundError('Blogs not found!');
     }
@@ -58,6 +61,17 @@ class BlogServices {
     return Blog;
   }
 
+  async deleteOneBlogForTheUser(userId, blogId) {
+    const Blog = await this._BlogRepository.deleteOneBlogForTheUser(
+      userId,
+      blogId
+    );
+    if (!Blog) {
+      throw new BadRequestError('Could not delete the Blog!');
+    }
+
+    return Blog;
+  }
   async userLikeOrDisLikePost({ userId, blogId }) {
     const hasUserAlreadyLiked = await this._BlogRepository.hasUserAlreadyLiked({
       userId,
