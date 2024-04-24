@@ -33,7 +33,7 @@ const LeftSidebar = () => {
             <DrawerHeader>Menu</DrawerHeader>
             <DrawerBody>
               <VStack spacing={4} align="stretch">
-                {/* Add your sidebar items here */}
+               
                 <Box>Item 1</Box>
                 <Box>Item 2</Box>
                 <Box>Item 3</Box>

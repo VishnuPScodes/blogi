@@ -18,6 +18,10 @@ export const userSchema = new mongoose.Schema({
   following: {
     type: [Types.ObjectId],
   },
+  isPremiemUser: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 //hashing to protect the passwords

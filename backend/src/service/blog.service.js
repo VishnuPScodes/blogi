@@ -7,11 +7,18 @@ class BlogServices {
     this._BlogRepository = new BlogRepository();
   }
 
-  async getAllBlogs(userId) {
+  async getAllBlogs({ userId, search }) {
     if (!userId) {
       NotFoundError('UserId not found!');
     }
-    const allBlogs = await this._BlogRepository.getAllBlog(userId);
+    let match = {
+      userId: { $ne: userId },
+    };
+    if (search) {
+      const regex = new RegExp(search, 'i');
+      match.username = { $regex: regex };
+    }
+    const allBlogs = await this._BlogRepository.getAllBlog(match);
     if (!allBlogs) {
       throw new NotFoundError('Blogs not found!');
     }

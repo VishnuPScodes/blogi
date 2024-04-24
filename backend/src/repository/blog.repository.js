@@ -7,31 +7,29 @@ export class BlogRepository {
     this._model = Blogs;
     this._comment = Comment;
   }
+  // getting all blogs ==> premiumuser will come first , new posts will come first , user's posts wont come
 
-  async getAllBlog(userId) {
+  async getAllBlog(match) {
     const Blogs = this._model.aggregate([
       {
-        match: {
-          userId: { $ne: userId },
-        },
+        $match: match,
       },
       {
         $lookup: {
           from: 'Comments',
-          localField: 'comment.',
-          foreignField: '_id',
+          localField: '_id',
+          foreignField: 'blogId',
           as: 'comments',
         },
       },
       {
-        $addNewField: {
-          totalLikes: {
-            $count: '$likes',
-          },
+        $addFields: {
+          totalLikes: { $size: '$likes' },
+          totalComments: { $size: '$comments' },
         },
       },
       {
-        $sort: {},
+        $sort: { createdAt: -1, isPremiumUser: 1 },
       },
     ]);
 

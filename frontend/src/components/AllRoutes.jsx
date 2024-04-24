@@ -5,6 +5,7 @@ function AllRoutes(props) {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+
     </Routes>
   );
 }

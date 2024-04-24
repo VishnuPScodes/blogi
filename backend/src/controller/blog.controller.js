@@ -3,7 +3,8 @@ import { BadRequestError } from '../utils/response/error.js';
 
 export const getAllBlogs = async (req, res) => {
   const userId = req.user._id;
-  const blogs = await BlogServices_.getAllBlogs(userId);
+  const { search } = req.query;
+  const blogs = await BlogServices_.getAllBlogs({ userId, search });
 
   res.send(blogs);
 };
