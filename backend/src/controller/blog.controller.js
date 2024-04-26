@@ -1,5 +1,4 @@
 import { BlogServices_ } from '../service/blog.service.js';
-import { BadRequestError } from '../utils/response/error.js';
 
 export const getAllBlogs = async (req, res) => {
   const userId = req.user._id;

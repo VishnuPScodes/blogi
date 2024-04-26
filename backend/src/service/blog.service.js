@@ -1,16 +1,16 @@
-// import { BlogsRepository } from '../repository/Blogs.repository.js';
+import { BadRequestError, NotFoundError } from '../../utils/response/error.js';
 import { BlogRepository } from '../repository/blog.repository.js';
-import { NotFoundError, BadRequestError } from '../utils/response/error.js';
 
 class BlogServices {
   constructor() {
     this._BlogRepository = new BlogRepository();
   }
 
-  async getAllBlogs({ userId, search }) {
+  async getAllBlogs({ userId, search, limit, page }) {
     if (!userId) {
       NotFoundError('UserId not found!');
     }
+    let skip = (page - 1) * limit;
     let match = {
       userId: { $ne: userId },
     };
@@ -18,7 +18,11 @@ class BlogServices {
       const regex = new RegExp(search, 'i');
       match.username = { $regex: regex };
     }
-    const allBlogs = await this._BlogRepository.getAllBlog(match);
+    const allBlogs = await this._BlogRepository.getAllBlog({
+      match,
+      limit,
+      skip,
+    });
     if (!allBlogs) {
       throw new NotFoundError('Blogs not found!');
     }

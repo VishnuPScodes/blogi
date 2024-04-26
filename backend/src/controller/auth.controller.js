@@ -4,7 +4,7 @@ import { UserAuthServices_ } from '../service/auth.service.js';
 const router = express.Router();
 
 export const getUserInfo = async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.params.userId;
   const user = await UserAuthServices_.getUserData(userId);
 
   res.send(user);

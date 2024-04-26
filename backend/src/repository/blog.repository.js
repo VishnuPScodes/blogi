@@ -1,6 +1,5 @@
 import { Blogs } from '../model/blog.model.js';
 import { Comment } from '../model/comment.model.js';
-import LiveBlogModel from '../models/liveBlog.model.js';
 
 export class BlogRepository {
   constructor() {
@@ -9,7 +8,7 @@ export class BlogRepository {
   }
   // getting all blogs ==> premiumuser will come first , new posts will come first , user's posts wont come
 
-  async getAllBlog(match) {
+  async getAllBlog({ match, limit, skip }) {
     const Blogs = this._model.aggregate([
       {
         $match: match,
@@ -31,6 +30,12 @@ export class BlogRepository {
       {
         $sort: { createdAt: -1, isPremiumUser: 1 },
       },
+      {
+        $limit: limit,
+      },
+      {
+        $skip: skip,
+      },
     ]);
 
     return Blogs;
@@ -47,7 +52,7 @@ export class BlogRepository {
 
     return postedBlog;
   }
-
+  // getting all blogs by user
   async getUserBlog(userId) {
     const Blog = this._model.find({ userId }).lean();
 

@@ -6,16 +6,23 @@ export class UserAuthRepository {
   }
 
   async getUserData(userId) {
-    const user = this._model.findOne({ _id: userId });
+    const user = this._model
+      .findOne({ _id: userId })
+      .select('userName email profilePicture followers following');
 
     return user;
   }
 
   async registerUser(params) {
-    const { password, name, email } = params;
+    const { password, name, email, profilePicture } = params;
 
-    const user = this._model.create({ password, name, email });
-
+    const user = await this._model.create({
+      password,
+      name,
+      email,
+      profilePicture,
+    });
+    console.log('2', user);
     return user;
   }
 

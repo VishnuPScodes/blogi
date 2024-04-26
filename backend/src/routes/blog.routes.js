@@ -12,9 +12,9 @@ import { isAuthenticated } from '../middlewares/auth/isAuthenticated.js';
 const blogRouter = express.Router();
 
 blogRouter.get('/getblog', isAuthenticated, asyncHandler(getAllBlogs));
-blogRouter.post('/getblog/:blogId', isAuthenticated, asyncHandler(getBlogById));
+blogRouter.get('/getblog/:blogId', isAuthenticated, asyncHandler(getBlogById));
 blogRouter.post('/createBlog', isAuthenticated, asyncHandler(createBlog));
-blogRouter.post(
+blogRouter.get(
   '/getUserBlogs/:userId',
   isAuthenticated,
   asyncHandler(getUserBlogs)
