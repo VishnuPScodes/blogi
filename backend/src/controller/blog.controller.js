@@ -41,10 +41,6 @@ export const createBlog = async (req, res) => {
     description,
     tags,
   });
-  if (!postedBlog) {
-    throw new BadRequestError('Could not post the Blog');
-  }
-
   res.send(postedBlog);
 };
 

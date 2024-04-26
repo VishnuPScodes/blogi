@@ -43,7 +43,7 @@ export class BlogRepository {
 
   async createBlog(params) {
     const { userId, title, description, tags } = params;
-    const postedBlog = await BlogModel.create({
+    const postedBlog = await this._model.create({
       userId,
       title,
       description,

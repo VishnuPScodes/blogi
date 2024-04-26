@@ -18,7 +18,7 @@ class UserAuthServices {
 
   //register user
   async registerUser(params) {
-    const { password, name, email } = params;
+    const { password, userName, email, profilePicture } = params;
 
     const alreadyUser = await this._userAuthRepository.isUserAlreadyExists(
       email
@@ -29,7 +29,7 @@ class UserAuthServices {
     console.log('2', alreadyUser);
     const user = await this._userAuthRepository.registerUser({
       password,
-      name,
+      userName,
       email,
       profilePicture,
     });

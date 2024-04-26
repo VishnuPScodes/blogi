@@ -11,9 +11,9 @@ export const getUserInfo = async (req, res) => {
 };
 
 export const registerUser = async (req, res) => {
-  const { name, email, password, profilePicture } = req.body;
+  const { userName, email, password, profilePicture } = req.body;
   const user = await UserAuthServices_.registerUser({
-    name,
+    userName,
     email,
     password,
     profilePicture,

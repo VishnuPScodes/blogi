@@ -14,11 +14,11 @@ export class UserAuthRepository {
   }
 
   async registerUser(params) {
-    const { password, name, email, profilePicture } = params;
+    const { password, userName, email, profilePicture } = params;
 
     const user = await this._model.create({
       password,
-      name,
+      userName,
       email,
       profilePicture,
     });
