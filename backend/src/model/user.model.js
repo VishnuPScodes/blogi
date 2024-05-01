@@ -1,11 +1,15 @@
 import mongoose, { Types } from 'mongoose';
-
+import bcrypt from 'bcryptjs';
 export const userSchema = new mongoose.Schema({
   userName: {
     type: String,
     required: true,
   },
   email: {
+    type: String,
+    required: true,
+  },
+  password: {
     type: String,
     required: true,
   },
@@ -18,7 +22,7 @@ export const userSchema = new mongoose.Schema({
   following: {
     type: [Types.ObjectId],
   },
-  isPremiemUser: {
+  isPremiumUser: {
     type: Boolean,
     default: false,
   },
@@ -37,6 +41,7 @@ userSchema.pre('save', function (next) {
 });
 
 userSchema.methods.checkPassword = function (password) {
+  console.log('thisss fro', password, this.password);
   return bcrypt.compareSync(password, this.password);
 };
 

@@ -34,14 +34,18 @@ export const userLikeOrDisLikePost = async (req, res) => {
 };
 
 export const createBlog = async (req, res) => {
-  const { userId, title, description, tags } = req.body;
-  const postedBlog = await BlogServices_.createBlog({
-    userId,
-    title,
-    description,
-    tags,
-  });
-  res.send(postedBlog);
+  try {
+    const { userId, title, description, tags } = req.body;
+    const postedBlog = await BlogServices_.createBlog({
+      userId,
+      title,
+      description,
+      tags,
+    });
+    res.send(postedBlog);
+  } catch (error) {
+    console.log('blody', error);
+  }
 };
 
 //making comment by other user

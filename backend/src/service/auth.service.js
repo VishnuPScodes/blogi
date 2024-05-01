@@ -55,6 +55,7 @@ class UserAuthServices {
     if (!alreadyUser) {
       throw new BadRequestError('User does not exists with this email id');
     }
+    console.log('paasswrd', password);
     const match = alreadyUser.checkPassword(password);
     if (!match) {
       throw new BadRequestError('Password does not match');
