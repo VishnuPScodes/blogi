@@ -26,18 +26,16 @@ class UserAuthServices {
     if (alreadyUser) {
       throw new BadRequestError('User already exists!');
     }
-    console.log('2', alreadyUser);
     const user = await this._userAuthRepository.registerUser({
       password,
       userName,
       email,
       profilePicture,
     });
-    console.log('2', user);
     if (!user) {
       throw new BadRequestError('Not able to create the user');
     }
-    const token = newToken();
+    const token = newToken(user);
 
     return {
       token,

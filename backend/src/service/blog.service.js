@@ -32,6 +32,9 @@ class BlogServices {
 
   async createBlog(params) {
     const { userId, title, description, tags } = params;
+    if (!userId) {
+      throw new BadRequestError('UserId not found!');
+    }
     const postedBlog = await this._BlogRepository.createBlog({
       userId,
       title,

@@ -2,8 +2,16 @@ import { BlogServices_ } from '../service/blog.service.js';
 
 export const getAllBlogs = async (req, res) => {
   const userId = req.user._id;
-  const { search } = req.query;
-  const blogs = await BlogServices_.getAllBlogs({ userId, search });
+  console.log({ userId });
+  let { search, page, limit } = req.query;
+  page = page ? Number(page) : 1;
+  limit = limit ? Number(limit) : 10;
+  const blogs = await BlogServices_.getAllBlogs({
+    userId,
+    search,
+    page,
+    limit,
+  });
 
   res.send(blogs);
 };
@@ -35,7 +43,8 @@ export const userLikeOrDisLikePost = async (req, res) => {
 
 export const createBlog = async (req, res) => {
   try {
-    const { userId, title, description, tags } = req.body;
+    const { title, description, tags } = req.body;
+    const userId = req.user._id;
     const postedBlog = await BlogServices_.createBlog({
       userId,
       title,
