@@ -59,8 +59,9 @@ export const createBlog = async (req, res) => {
 
 //making comment by other user
 export const createComment = async (req, res) => {
-  const { userId, comment } = req.body;
+  const { comment } = req.body;
   const { blogId } = req.params;
+  const userId = req.user._id;
 
   const blog = await BlogServices_.createComment({
     userId,

@@ -65,8 +65,7 @@ export class BlogRepository {
     return Blog;
   }
 
-  async createCommentByUser(params) {
-    const { userId, comment } = params;
+  async createCommentByUser(comment, userId) {
     const postedComment = this._comment.create({
       blogId,
       userId,
@@ -76,6 +75,18 @@ export class BlogRepository {
     return postedComment;
   }
 
+  async addCommentIdToBlog(blogId, commentId) {
+    const updatedPost = await this._model.findOneAndUpdate(
+      { _id: blogId },
+      {
+        $push: {
+          comment: postedComment._id,
+        },
+      }
+    );
+
+    return updatedPost;
+  }
   async likePost(params) {
     const { userId, blogId } = params;
     const post = this._comment.findOneAndUpdate(

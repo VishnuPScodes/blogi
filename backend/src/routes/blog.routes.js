@@ -2,6 +2,7 @@ import express from 'express';
 import asyncHandler from '../../utils/asyncHandler.js';
 import {
   createBlog,
+  createComment,
   getAllBlogs,
   getBlogById,
   getUserBlogs,
@@ -22,7 +23,7 @@ blogRouter.get(
 blogRouter.post(
   '/createComment/:blogId',
   isAuthenticated,
-  asyncHandler(getUserBlogs)
+  asyncHandler(createComment)
 );
 blogRouter.patch(
   '/likeOrDislike/:blogId',

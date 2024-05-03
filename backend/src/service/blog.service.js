@@ -48,6 +48,26 @@ class BlogServices {
     return postedBlog;
   }
 
+  async createComment(comment, userId, blogId) {
+    if (!userId) {
+      throw new BadRequestError('UserId not found!');
+    }
+    const postedComment = await this._BlogRepository.createCommentByUser({
+      userId,
+      comment,
+    });
+    if (!postedComment) {
+      throw new BadRequestError('Could not post the comment');
+    }
+    const updatedBlogWithCommentId =
+      await this._BlogRepository.addCommentIdToBlog(blogId, postedComment._id);
+    if (!updatedBlogWithCommentId) {
+      throw new BadRequestError('Could not post the comment');
+    }
+
+    return updatedBlogWithCommentId;
+  }
+
   async getUserBlogs(userId) {
     const Blogs = await this._BlogRepository.getUserBlogs(userId);
     if (Blogs.length == 0) {
