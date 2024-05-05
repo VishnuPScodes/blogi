@@ -160,4 +160,9 @@ export class BlogRepository {
 
     return Blog;
   }
+  async getUserBlogs(userId) {
+    const userBlogs = await this._model.find({ userId });
+
+    return userBlogs;
+  }
 }

@@ -70,8 +70,8 @@ class BlogServices {
 
   async getUserBlogs(userId) {
     const Blogs = await this._BlogRepository.getUserBlogs(userId);
-    if (Blogs.length == 0) {
-      throw new NotFoundError('No Blogs available for the user!');
+    if (!Blogs) {
+      throw new NotFoundError('could not get the blogs!');
     }
 
     return Blogs;
