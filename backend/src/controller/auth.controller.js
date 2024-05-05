@@ -26,17 +26,13 @@ export const registerUser = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const loginResponse = await UserAuthServices_.userLogin({
-      password,
-      email,
-    });
+  const { email, password } = req.body;
+  const loginResponse = await UserAuthServices_.userLogin({
+    password,
+    email,
+  });
 
-    res.send(loginResponse);
-  } catch (error) {
-    console.log('errrr', error);
-  }
+  res.send(loginResponse);
 };
 
 export default router;

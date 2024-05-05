@@ -161,7 +161,49 @@ export class BlogRepository {
     return Blog;
   }
   async getUserBlogs(userId) {
-    const userBlogs = await this._model.find({ userId });
+    const userBlogs = await this._model.aggregate([
+      {
+        $match: {
+          userId,
+        },
+      },
+      {
+        $lookup: {
+          from: 'Comments',
+          localField: '_id',
+          foreignField: 'blogId',
+          as: 'comments',
+        },
+      },
+      {
+        $lookup: {
+          from: 'User',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      {
+        $addFields: {
+          totalLikes: { $size: '$likes' },
+          totalComments: { $size: '$comments' },
+        },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $project: {
+          user: {
+            username: 1,
+            profilePicture: 1,
+          },
+        },
+      },
+    ]);
 
     return userBlogs;
   }
