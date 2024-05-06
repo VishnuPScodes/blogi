@@ -8,21 +8,29 @@ class BlogServices {
 
   async getAllBlogs({ userId, search, limit, page }) {
     if (!userId) {
-      NotFoundError('UserId not found!');
+      throw new NotFoundError('UserId not found!');
     }
-    let skip = (page - 1) * limit;
+
+    const skip = (page - 1) * limit;
     let match = {
       userId: { $ne: userId },
     };
+
     if (search) {
       const regex = new RegExp(search, 'i');
-      match.username = { $regex: regex };
+      match.$or = [
+        { username: { $regex: regex } },
+        { title: { $regex: regex } },
+        { description: { $regex: regex } },
+      ];
     }
+
     const allBlogs = await this._BlogRepository.getAllBlog({
       match,
       limit,
       skip,
     });
+
     if (!allBlogs) {
       throw new NotFoundError('Blogs not found!');
     }
@@ -48,14 +56,17 @@ class BlogServices {
     return postedBlog;
   }
 
-  async createComment(comment, userId, blogId) {
+  async createComment(params) {
+    const { comment, userId, blogId } = params;
     if (!userId) {
       throw new BadRequestError('UserId not found!');
     }
     const postedComment = await this._BlogRepository.createCommentByUser({
       userId,
       comment,
+      blogId,
     });
+    console.log('coment', postedComment);
     if (!postedComment) {
       throw new BadRequestError('Could not post the comment');
     }

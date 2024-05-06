@@ -1,5 +1,6 @@
 import { Blogs } from '../model/blog.model.js';
 import { Comment } from '../model/comment.model.js';
+import { User } from '../model/user.model.js';
 
 export class BlogRepository {
   constructor() {
@@ -15,26 +16,77 @@ export class BlogRepository {
       },
       {
         $lookup: {
-          from: 'Comments',
+          from: User.collection.name,
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'userDetails',
+        },
+      },
+      {
+        $lookup: {
+          from: Comment.collection.name,
           localField: '_id',
           foreignField: 'blogId',
           as: 'comments',
         },
       },
       {
-        $addFields: {
-          totalLikes: { $size: '$likes' },
-          totalComments: { $size: '$comments' },
+        $lookup: {
+          from: User.collection.name,
+          localField: 'comments.userId', // userId from Comments collection
+          foreignField: '_id', // _id in User collection
+          as: 'commentUsers',
         },
       },
       {
-        $sort: { createdAt: -1, isPremiumUser: 1 },
+        $addFields: {
+          totalLikes: { $size: '$likes' },
+          totalComments: { $size: '$comments' },
+          comments: {
+            $map: {
+              input: '$comments',
+              as: 'comment',
+              in: {
+                $mergeObjects: [
+                  '$$comment',
+                  {
+                    userDetails: {
+                      $arrayElemAt: [
+                        '$commentUsers',
+                        {
+                          $indexOfArray: [
+                            '$comments.userId',
+                            '$$comment.userId',
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $skip: skip,
       },
       {
         $limit: limit,
       },
       {
-        $skip: skip,
+        $sort: { createdAt: -1, isPremiumUser: 1 },
+      },
+      {
+        $project: {
+          userId: 1,
+          title: 1,
+          description: 1,
+          tags: 1,
+          viewers: 1,
+          likes: 1,
+          comments: 1,
+        },
       },
     ]);
 
@@ -65,7 +117,8 @@ export class BlogRepository {
     return Blog;
   }
 
-  async createCommentByUser(comment, userId) {
+  async createCommentByUser(params) {
+    const { comment, userId, blogId } = params;
     const postedComment = this._comment.create({
       blogId,
       userId,
@@ -76,17 +129,20 @@ export class BlogRepository {
   }
 
   async addCommentIdToBlog(blogId, commentId) {
+    console.log('comment Id', commentId);
     const updatedPost = await this._model.findOneAndUpdate(
       { _id: blogId },
       {
         $push: {
-          comment: postedComment._id,
+          comments: commentId,
         },
-      }
+      },
+      { new: true }
     );
 
     return updatedPost;
   }
+
   async likePost(params) {
     const { userId, blogId } = params;
     const post = this._comment.findOneAndUpdate(
@@ -127,39 +183,12 @@ export class BlogRepository {
     return blog;
   }
 
-  async getBlogWithMoreDifficultyLevel(difficultyLevel, userId) {
-    const Blog = await this._model.findOne({
-      userId,
-      difficulty: { $gt: Number(difficultyLevel) },
-    });
-
-    return Blog;
-  }
-
-  async getBlogWithLessDifficultyLevel(difficultyLevel) {
-    const Blog = await this._model.findOne({
-      difficulty: { $lt: Number(difficultyLevel) },
-    });
-    return Blog;
-  }
-
-  async getOneLiveBlog(BlogId) {
-    const Blog = await this._model.findOne({ _id: BlogId });
-
-    return Blog;
-  }
-
-  async deleteAllBlogForTheUser(userId) {
-    const Blog = await this._model.deleteMany({ userId });
-
-    return Blog;
-  }
-
   async deleteOneBlogForTheUser(userId, blogId) {
     const Blog = await this._model.findOneAndDelete({ userId, blogId });
 
     return Blog;
   }
+
   async getUserBlogs(userId) {
     const userBlogs = await this._model.aggregate([
       {
@@ -201,6 +230,8 @@ export class BlogRepository {
             username: 1,
             profilePicture: 1,
           },
+          totalComments: 1,
+          totalLikes: 1,
         },
       },
     ]);

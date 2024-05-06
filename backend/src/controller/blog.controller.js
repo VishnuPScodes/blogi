@@ -1,19 +1,22 @@
 import { BlogServices_ } from '../service/blog.service.js';
 
 export const getAllBlogs = async (req, res) => {
-  const userId = req.user._id;
-  console.log({ userId });
-  let { search, page, limit } = req.query;
-  page = page ? Number(page) : 1;
-  limit = limit ? Number(limit) : 10;
-  const blogs = await BlogServices_.getAllBlogs({
-    userId,
-    search,
-    page,
-    limit,
-  });
+  try {
+    const userId = req.user._id;
+    let { search, page, limit } = req.query;
+    page = page ? Number(page) : 1;
+    limit = limit ? Number(limit) : 10;
+    const blogs = await BlogServices_.getAllBlogs({
+      userId,
+      search,
+      page,
+      limit,
+    });
 
-  res.send(blogs);
+    res.send(blogs);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const getUserBlogs = async (req, res) => {
@@ -42,37 +45,34 @@ export const userLikeOrDisLikePost = async (req, res) => {
 };
 
 export const createBlog = async (req, res) => {
-  try {
-    const { title, description, tags } = req.body;
-    const userId = req.user._id;
-    const postedBlog = await BlogServices_.createBlog({
-      userId,
-      title,
-      description,
-      tags,
-    });
-    res.send(postedBlog);
-  } catch (error) {
-    console.log('blody', error);
-  }
+  const { title, description, tags } = req.body;
+  const userId = req.user._id;
+  const postedBlog = await BlogServices_.createBlog({
+    userId,
+    title,
+    description,
+    tags,
+  });
+
+  res.send(postedBlog);
 };
 
 //making comment by other user
 export const createComment = async (req, res) => {
-  const { comment } = req.body;
-  const { blogId } = req.params;
-  const userId = req.user._id;
+  try {
+    const { comment } = req.body;
+    const { blogId } = req.params;
+    const userId = req.user._id;
+    const blog = await BlogServices_.createComment({
+      userId,
+      comment,
+      blogId,
+    });
 
-  const blog = await BlogServices_.createComment({
-    userId,
-    comment,
-    blogId,
-  });
-  if (!blog) {
-    throw new BadRequestError('Could not post the comment');
+    res.send(blog);
+  } catch (error) {
+    console.log(error);
   }
-
-  res.send(blog);
 };
 
 export const removeAllBlogsPerUser = async (req, res) => {
