@@ -9,7 +9,7 @@ export const getUserInfo = async (req, res) => {
 
   res.send(user);
 };
-
+let test = "";
 export const registerUser = async (req, res) => {
   const { userName, email, password, profilePicture } = req.body;
   const user = await UserAuthServices_.registerUser({
